@@ -21,6 +21,9 @@ public class UserModel {
     @Column(name = "userType", nullable = false)
     private UserTypeEnum userType;
 
+    @Column(name = "cpf", nullable = false)
+    private String cpf;
+
     @Column(name = "username", nullable = false)
     private String username;
 
