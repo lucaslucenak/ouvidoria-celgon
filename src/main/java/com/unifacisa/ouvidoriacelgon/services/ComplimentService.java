@@ -42,4 +42,8 @@ public class ComplimentService {
     public void deleteComplimentById(Long id) {
         complimentRepository.deleteById(id);
     }
+
+    public void deleteAllCompliments() {
+        complimentRepository.deleteAll();
+    }
 }

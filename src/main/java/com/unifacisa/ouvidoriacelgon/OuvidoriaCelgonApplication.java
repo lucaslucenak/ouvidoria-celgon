@@ -8,7 +8,6 @@ import com.unifacisa.ouvidoriacelgon.exceptions.UsernameAlreadyTakenException;
 import com.unifacisa.ouvidoriacelgon.models.ComplimentModel;
 import com.unifacisa.ouvidoriacelgon.models.ProtestModel;
 import com.unifacisa.ouvidoriacelgon.models.UserModel;
-import com.unifacisa.ouvidoriacelgon.repositories.ProtestRepository;
 import com.unifacisa.ouvidoriacelgon.services.ComplimentService;
 import com.unifacisa.ouvidoriacelgon.services.ProtestService;
 import com.unifacisa.ouvidoriacelgon.services.UserService;
@@ -25,13 +24,20 @@ import java.util.Scanner;
 public class OuvidoriaCelgonApplication implements CommandLineRunner {
 
 	@Autowired
-	private ProtestService protestService;
+	private final ProtestService protestService;
 	@Autowired
-	private ComplimentService complimentService;
+	private final ComplimentService complimentService;
 	@Autowired
-	private UserService userService;
+	private final UserService userService;
 	@Autowired
-	private PrintFormatter printFormatter;
+	private final PrintFormatter printFormatter;
+
+	public OuvidoriaCelgonApplication(ProtestService protestService, ComplimentService complimentService, UserService userService, PrintFormatter printFormatter) {
+		this.protestService = protestService;
+		this.complimentService = complimentService;
+		this.userService = userService;
+		this.printFormatter = printFormatter;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(OuvidoriaCelgonApplication.class, args);
@@ -139,47 +145,150 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 				protestService.saveProtest(new ProtestModel(protestDescription, userModel));
 
 			} else if (opc.equals("3")) {
-				System.out.println(complimentService.findAllComplimentsByUserId(userModel.getId()));
+				if (complimentService.findAllComplimentsByUserId(userModel.getId()).size() > 0) {
+					printFormatter.formatComplimentsOutput(complimentService.findAllComplimentsByUserId(userModel.getId()));
+				} else {
+					System.out.println("Não há elogios cadastrados em seu nome.");
+				}
 
 			} else if (opc.equals("4")) {
-				System.out.println(protestService.findAllProtestsByUserId(userModel.getId()));
+				if (protestService.findAllProtestsByUserId(userModel.getId()).size() > 0) {
+					printFormatter.formatProtestsOutput(protestService.findAllProtestsByUserId(userModel.getId()));
+				} else {
+					System.out.println("Não há reclamações cadastradas em seu nome.");
+				}
 			} else if (opc.equals("5")) {
 				System.out.println("Finalizando... Obrigado!");
 				System.exit(0);
 			}
 		}
+
 	} else if (isLoggedInAsAdmin) {
-		System.out.println(showAdminMenu());
-		System.out.print("Opção: ");
-		opc = sc.nextLine();
+		while (!Objects.equals(opc, "9")) {
+			System.out.println(showAdminMenu());
+			System.out.print("Opção: ");
+			opc = sc.nextLine();
 
-		if (opc.equals("1")) {
-			System.out.println("Reclamações:");
-			printFormatter.formatProtestsOutput(protestService.findAllProtests());
-		} else if (opc.equals("2")) {
-			System.out.println("Elogios:");
-			printFormatter.formatComplimentsOutput(complimentService.findAllCompliments());
-		} else if (opc.equals("3")) {
-			System.out.println("Reclamações:");
-			printFormatter.formatProtestsOutput(protestService.findAllProtests());
-			System.out.println("Elogios:");
-			printFormatter.formatComplimentsOutput(complimentService.findAllCompliments());
-		} else if (opc.equals("4")) {
+			if (opc.equals("1")) {
+				if (protestService.findAllProtests().size() > 0) {
+					System.out.println("Reclamações:");
+					printFormatter.formatProtestsOutput(protestService.findAllProtests());
+				} else {
+					System.out.println("Não há reclamações cadastradas");
+				}
 
-		} else if (opc.equals("5")) {
+			} else if (opc.equals("2")) {
+				if (complimentService.findAllCompliments().size() > 0) {
+					System.out.println("Elogios:");
+					printFormatter.formatComplimentsOutput(complimentService.findAllCompliments());
+				} else {
+					System.out.println("Não há elogios cadastradas");
+				}
 
-		} else if (opc.equals("6")) {
+			} else if (opc.equals("3")) {
+				if (protestService.findAllProtests().size() > 0) {
+					System.out.println("Reclamações:");
+					printFormatter.formatProtestsOutput(protestService.findAllProtests());
+				} else {
+					System.out.println("Não há reclamações cadastradas");
+				}
 
-		} else if (opc.equals("7")) {
+				if (complimentService.findAllCompliments().size() > 0) {
+					System.out.println("Elogios:");
+					printFormatter.formatComplimentsOutput(complimentService.findAllCompliments());
+				} else {
+					System.out.println("Não há elogios cadastradas");
+				}
 
-		} else if (opc.equals("8")) {
+			} else if (opc.equals("4")) {
+				if (protestService.findAllProtests().size() > 0) {
+					System.out.println("Reclamações:");
+					printFormatter.formatProtestsOutput(protestService.findAllProtests());
 
-		} else if (opc.equals("9")) {
+					try {
+						System.out.print("Id da reclamação a ser excluída: ");
+						Long id = Long.parseLong(sc.nextLine());
+						protestService.deleteProtestById(id);
+					} catch (Exception e) {
+						System.out.println("Id inválido.");
+					}
 
+				} else {
+					System.out.println("Não há reclamações cadastradas");
+				}
+
+			} else if (opc.equals("5")) {
+				if (complimentService.findAllCompliments().size() > 0) {
+					System.out.println("Elogios:");
+					printFormatter.formatComplimentsOutput(complimentService.findAllCompliments());
+
+					try {
+						System.out.print("Id do elogio a ser excluído: ");
+						Long id = Long.parseLong(sc.nextLine());
+						complimentService.deleteComplimentById(id);
+					} catch (Exception e) {
+						System.out.println("Id inválido.");
+					}
+
+				} else {
+					System.out.println("Não há elogios cadastrados");
+				}
+
+			} else if (opc.equals("6")) {
+				if (protestService.findAllProtests().size() > 0) {
+					System.out.println("Tem certeza que deseja excluir todas as reclamações registradas? A ação é irreversível");
+					System.out.println("""
+                              1. Sim
+                              2. Não
+                        """);
+					System.out.print("Opção: ");
+					String confirm = sc.nextLine();
+					if (confirm.equals("1")) {
+						protestService.deleteAllProtests();
+					}
+				} else {
+					System.out.println("Não há reclamações cadastradas");
+				}
+
+			} else if (opc.equals("7")) {
+				if (complimentService.findAllCompliments().size() > 0) {
+					System.out.println("Tem certeza que deseja excluir todos os elogios registrados? A ação é irreversível");
+					System.out.println("""
+                              1. Sim
+                              2. Não
+                        """);
+					System.out.print("Opção: ");
+					String confirm = sc.nextLine();
+					if (confirm.equals("1")) {
+						complimentService.deleteAllCompliments();
+					}
+				} else {
+					System.out.println("Não há elogios cadastrados");
+				}
+
+			} else if (opc.equals("8")) {
+				if (protestService.findAllProtests().size() > 0 || complimentService.findAllCompliments().size() > 0) {
+					System.out.println("Tem certeza que deseja excluir todas as manifestações? A ação é irreversível");
+					System.out.println("""
+                              1. Sim
+                              2. Não
+                        """);
+					System.out.print("Opção: ");
+					String confirm = sc.nextLine();
+					if (confirm.equals("1")) {
+						protestService.deleteAllProtests();
+						complimentService.deleteAllCompliments();
+					}
+				} else {
+					System.out.println("Não há elogios ou reclamações registrados");
+				}
+
+			} else if (opc.equals("9")) {
+				System.out.println("Finalizando... Obrigado!");
+				System.exit(0);
+			}
 		}
 	}
-
-
 	}
 
 	public String showLoginMenu() {

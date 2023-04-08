@@ -43,4 +43,8 @@ public class ProtestService {
     public void deleteProtestById(Long id) {
         protestRepository.deleteById(id);
     }
+
+    public void deleteAllProtests() {
+        protestRepository.deleteAll();
+    }
 }
