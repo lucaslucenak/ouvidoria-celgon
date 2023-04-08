@@ -1,12 +1,14 @@
 package com.unifacisa.ouvidoriacelgon.services;
 
 import com.unifacisa.ouvidoriacelgon.enums.UserTypeEnum;
+import com.unifacisa.ouvidoriacelgon.models.ComplimentModel;
 import com.unifacisa.ouvidoriacelgon.models.ProtestModel;
 import com.unifacisa.ouvidoriacelgon.models.UserModel;
 import com.unifacisa.ouvidoriacelgon.repositories.ProtestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +27,13 @@ public class ProtestService {
     }
 
     public List<ProtestModel> findAllProtestsByUserId(Long id) {
-        return protestRepository.findProtestByUserIdContains(id);
+        List<ProtestModel> protestModelsByUserId = new ArrayList<>();
+        for (ProtestModel i : findAllProtests()) {
+            if (i.getUser().getId().equals(id)) {
+                protestModelsByUserId.add(i);
+            }
+        }
+        return protestModelsByUserId;
     }
 
     public Optional<ProtestModel> findProtestById(Long id) {

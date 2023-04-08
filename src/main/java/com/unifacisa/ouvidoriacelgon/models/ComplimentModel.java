@@ -18,7 +18,7 @@ public class ComplimentModel extends ExpressionModel {
     @Column
     private String complimentDescription;
 
-    @ManyToOne(fetch = FetchType.EAGER,  cascade= CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER,  cascade= CascadeType.MERGE)
     @JoinColumn(name="user_id")
     private UserModel user;
 }

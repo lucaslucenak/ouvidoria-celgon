@@ -1,7 +1,9 @@
 package com.unifacisa.ouvidoriacelgon.util;
 
 import br.com.caelum.stella.validation.CPFValidator;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CpfValidator {
 
     public CpfValidator() {

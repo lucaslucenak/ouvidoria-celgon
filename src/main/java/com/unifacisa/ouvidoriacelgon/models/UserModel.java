@@ -13,6 +13,19 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_user")
 public class UserModel {
 
+    public UserModel(UserTypeEnum userType, String cpf, String username, String password) {
+        this.userType = userType;
+        this.cpf = cpf;
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserModel(UserTypeEnum userType, String username, String password) {
+        this.userType = userType;
+        this.username = username;
+        this.password = password;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
