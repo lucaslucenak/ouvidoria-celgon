@@ -52,8 +52,8 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 		String opc = "";
 		UserModel userModel = null;
 
+		// Login
 		while (!Objects.equals(opc, "5")) {
-			// Login
 			System.out.println(showLoginMenu());
 			System.out.print("Opção: ");
 			opc = sc.nextLine();
@@ -128,30 +128,31 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 			}
 		}
 
-	if (isLoggedInAsDefault) {
-		while (!Objects.equals(opc, "5")) {
+		// Caso o usuário tenha decidido logar como um usuário padrão
+		if (isLoggedInAsDefault) {
+			while (!Objects.equals(opc, "5")) {
 			System.out.println(showDefaultUserMenu());
 			System.out.print("Opção: ");
 			opc = sc.nextLine();
 
-			if (opc.equals("1")) {
+			if (opc.equals("1")) { // Criar elogio
 				System.out.println("Descreva o elogio: ");
 				String complimentDescription = sc.nextLine();
 				complimentService.saveCompliment(new ComplimentModel(complimentDescription, userModel));
 
-			} else if (opc.equals("2")) {
+			} else if (opc.equals("2")) { // Criar reclamação
 				System.out.println("Descreva a recalamação: ");
 				String protestDescription = sc.nextLine();
 				protestService.saveProtest(new ProtestModel(protestDescription, userModel));
 
-			} else if (opc.equals("3")) {
+			} else if (opc.equals("3")) { // Pesquisar reclamações do usuário logado
 				if (complimentService.findAllComplimentsByUserId(userModel.getId()).size() > 0) {
 					printFormatter.formatComplimentsOutput(complimentService.findAllComplimentsByUserId(userModel.getId()));
 				} else {
 					System.out.println("Não há elogios cadastrados em seu nome.");
 				}
 
-			} else if (opc.equals("4")) {
+			} else if (opc.equals("4")) { // Pesquisar elogios do usuário logado
 				if (protestService.findAllProtestsByUserId(userModel.getId()).size() > 0) {
 					printFormatter.formatProtestsOutput(protestService.findAllProtestsByUserId(userModel.getId()));
 				} else {
@@ -163,13 +164,16 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 			}
 		}
 
-	} else if (isLoggedInAsAdmin) {
-		while (!Objects.equals(opc, "9")) {
+	}
+
+		// Caso o usuário tenha decidido logar como um usuário administrador
+		else if (isLoggedInAsAdmin) {
+			while (!Objects.equals(opc, "9")) {
 			System.out.println(showAdminMenu());
 			System.out.print("Opção: ");
 			opc = sc.nextLine();
 
-			if (opc.equals("1")) {
+			if (opc.equals("1")) { // Visualizar todas as reclamações
 				if (protestService.findAllProtests().size() > 0) {
 					System.out.println("Reclamações:");
 					printFormatter.formatProtestsOutput(protestService.findAllProtests());
@@ -177,7 +181,7 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 					System.out.println("Não há reclamações cadastradas");
 				}
 
-			} else if (opc.equals("2")) {
+			} else if (opc.equals("2")) { // Visualizar todos os elogios
 				if (complimentService.findAllCompliments().size() > 0) {
 					System.out.println("Elogios:");
 					printFormatter.formatComplimentsOutput(complimentService.findAllCompliments());
@@ -185,7 +189,7 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 					System.out.println("Não há elogios cadastradas");
 				}
 
-			} else if (opc.equals("3")) {
+			} else if (opc.equals("3")) { // Visualizar todas as reclamações e todos os elogios
 				if (protestService.findAllProtests().size() > 0) {
 					System.out.println("Reclamações:");
 					printFormatter.formatProtestsOutput(protestService.findAllProtests());
@@ -200,7 +204,7 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 					System.out.println("Não há elogios cadastradas");
 				}
 
-			} else if (opc.equals("4")) {
+			} else if (opc.equals("4")) { // Excluir reclamação
 				if (protestService.findAllProtests().size() > 0) {
 					System.out.println("Reclamações:");
 					printFormatter.formatProtestsOutput(protestService.findAllProtests());
@@ -217,7 +221,7 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 					System.out.println("Não há reclamações cadastradas");
 				}
 
-			} else if (opc.equals("5")) {
+			} else if (opc.equals("5")) { // Excluir elogios
 				if (complimentService.findAllCompliments().size() > 0) {
 					System.out.println("Elogios:");
 					printFormatter.formatComplimentsOutput(complimentService.findAllCompliments());
@@ -234,7 +238,7 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 					System.out.println("Não há elogios cadastrados");
 				}
 
-			} else if (opc.equals("6")) {
+			} else if (opc.equals("6")) { // Excluir todas as reclamações
 				if (protestService.findAllProtests().size() > 0) {
 					System.out.println("Tem certeza que deseja excluir todas as reclamações registradas? A ação é irreversível");
 					System.out.println("""
@@ -250,7 +254,7 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 					System.out.println("Não há reclamações cadastradas");
 				}
 
-			} else if (opc.equals("7")) {
+			} else if (opc.equals("7")) { // Excluir todos os elogios
 				if (complimentService.findAllCompliments().size() > 0) {
 					System.out.println("Tem certeza que deseja excluir todos os elogios registrados? A ação é irreversível");
 					System.out.println("""
@@ -266,7 +270,7 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 					System.out.println("Não há elogios cadastrados");
 				}
 
-			} else if (opc.equals("8")) {
+			} else if (opc.equals("8")) { // Excluir todos os elogios e todas as reclamações
 				if (protestService.findAllProtests().size() > 0 || complimentService.findAllCompliments().size() > 0) {
 					System.out.println("Tem certeza que deseja excluir todas as manifestações? A ação é irreversível");
 					System.out.println("""
@@ -288,7 +292,7 @@ public class OuvidoriaCelgonApplication implements CommandLineRunner {
 				System.exit(0);
 			}
 		}
-	}
+		}
 	}
 
 	public String showLoginMenu() {
